@@ -12,7 +12,7 @@ from flask import request
 from urllib.parse import urlsplit
 from app.forms import RegistrationForm
 from datetime import datetime, timezone
-from app.forms import EditProfileForm
+from app.forms import EditProfileForm, LogTimeForm
 
 @app.route('/')
 @app.route('/index')
@@ -91,5 +91,12 @@ def edit_profile():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile',
-                           form=form)
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
+@app.route('/logTime', methods=['GET', 'POST'])
+@login_required
+def logTime():
+    form = LogTimeForm()
+    if form.validate_on_submit():
+        flash('an administrator will be notified.')
+    return render_template('logTime.html')
+    
