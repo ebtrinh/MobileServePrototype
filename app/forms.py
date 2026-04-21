@@ -41,4 +41,5 @@ class EditProfileForm(FlaskForm):
 class LogTimeForm(FlaskForm):
     hours = IntegerField('Hours', widget=NumberInput(min=0))
     details = TextAreaField('What did you do?', validators=[Length(min=0, max=140)])
+    direct = BooleanField('Direct Service')
     submit = SubmitField('Submit')

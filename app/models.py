@@ -22,7 +22,8 @@ class User(UserMixin, db.Model):
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc))
     
-    hours: so.Mapped[int] = so.mapped_column(sa.String(64), index=True,
+    hours: so.Mapped[Optional[int]] = so.mapped_column(default=0)
+
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
@@ -48,4 +49,19 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+class Request(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    username: so.Mapped[str] = so.mapped_column(sa.String(64))
+    email: so.Mapped[str] = so.mapped_column(sa.String(120))
+    hours: so.Mapped[int] = so.mapped_column()
+    details: so.Mapped[str] = so.mapped_column(sa.String(140))
+    direct: so.Mapped[bool] = so.mapped_column(default=False)
+    timestamp: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now(timezone.utc))
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                                index=True)
+
+    def __repr__(self):
+        return '<Request {} - {} hrs>'.format(self.username, self.hours)
 

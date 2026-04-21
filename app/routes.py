@@ -5,7 +5,7 @@ from flask import render_template, flash, redirect, url_for
 from flask_login import current_user, login_user
 import sqlalchemy as sa
 from app import db
-from app.models import User
+from app.models import User, Request
 from flask_login import logout_user
 from flask_login import login_required
 from flask import request
@@ -97,6 +97,17 @@ def edit_profile():
 def logTime():
     form = LogTimeForm()
     if form.validate_on_submit():
-        flash('an administrator will be notified.')
-    return render_template('logTime.html')
+        req = Request(
+            username=current_user.username,
+            email=current_user.email,
+            hours=form.hours.data,
+            details=form.details.data,
+            direct=form.direct.data,
+            user_id=current_user.id
+        )
+        db.session.add(req)
+        db.session.commit()
+        flash('Your hours have been submitted!')
+        return redirect(url_for('logTime'))
+    return render_template('logTime.html', title='Log Time', form=form)
     
